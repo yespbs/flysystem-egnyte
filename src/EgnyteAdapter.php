@@ -138,7 +138,7 @@ class EgnyteAdapter extends AbstractAdapter
         } catch (BadRequest $e) {
             return false;
         }
-        return $this->normalizeResponse($object);
+        return $this->normalizeResponse($object, $path);
     }
 
     /**
@@ -179,18 +179,30 @@ class EgnyteAdapter extends AbstractAdapter
 
     /**
      * {@inheritdoc}
+     * 
+     * @todo check return
      */
     public function listContents($directory = '', $recursive = false): array
     {
-        $location = $this->applyPathPrefix($directory);
-        $result = $this->fileClient->listFolder($location, $recursive);
-        if (! count($result['entries'])) {
+        $path = $this->applyPathPrefix($directory);
+        $result = $this->fileClient->listFolder($path, $recursive);
+        if ( (int)$result['total_count']) == 0) {
             return [];
         }
-        return array_map(function ($entry) {
-            $path = $this->removePathPrefix($entry['path_display']);
+
+        $folders = array_map(function ($entry) {
+            $path = $this->removePathPrefix($entry['path']);
             return $this->normalizeResponse($entry, $path);
-        }, $result['entries']);
+
+        }, $result['folders']);
+
+        $files = array_map(function ($entry) {
+            $path = $this->removePathPrefix($entry['path']);
+            return $this->normalizeResponse($entry, $path);
+
+        }, $result['files']);
+
+        return array_merge($folders, $files);
     }
 
     /**
@@ -204,7 +216,7 @@ class EgnyteAdapter extends AbstractAdapter
         } catch (BadRequest $e) {
             return false;
         }
-        return $this->normalizeResponse($object);
+        return $this->normalizeResponse($object, $path);
     }
 
     /**
@@ -261,7 +273,7 @@ class EgnyteAdapter extends AbstractAdapter
             return false;
         }
 
-        return $this->normalizeResponse($object);
+        return $this->normalizeResponse($object, $path);
     }
 
     /**
@@ -280,22 +292,36 @@ class EgnyteAdapter extends AbstractAdapter
             return false;
         }
 
-        return $this->normalizeResponse($object);
+        return $this->normalizeResponse($object, $path);
     }
 
-    protected function normalizeResponse(array $response): array
+    protected function normalizeResponse($response, $path=''): array
     {
-        $normalizedPath = ltrim($this->removePathPrefix($response['path']), '/');
+        
+        if( is_object($response) && isset($response->body) ){
+            $response = (array)$response->body;
+        }
+
+        if( isset($response['path']) ){
+            $normalizedPath = ltrim($this->removePathPrefix($response['path']), '/');
+        }else{
+            $path = ltrim($this->removePathPrefix($path), '/');
+        }
+
         $normalizedResponse = ['path' => $normalizedPath];
+
         if (isset($response['lastModified'])) {
             $normalizedResponse['timestamp'] = strtotime($response['lastModified']);
         }
+
         if (isset($response['size'])) {
             $normalizedResponse['size'] = $response['size'];
             $normalizedResponse['bytes'] = $response['size'];
         }
+
         $type = ((int)$response['is_folder'] == 1 ? 'dir' : 'file');
         $normalizedResponse['type'] = $type;
+
         return $normalizedResponse;
     }
 }

@@ -268,7 +268,14 @@ class EgnyteAdapter extends AbstractAdapter
     {
         $path = $this->applyPathPrefix($path);
         try {
+
+            print $path;
+
+            print '<hr>';
+            
             $object = $this->fileClient->upload($path, $contents);
+
+            print_r($object); die;
         } catch (BadRequest $e) {
             return false;
         }

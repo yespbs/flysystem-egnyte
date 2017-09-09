@@ -11,9 +11,7 @@ use Yespbs\Egnyte\Client;
 use Yespbs\Egnyte\Model\File as FileClient;
 use Yespbs\FlysystemEgnyte\EgnyteAdapter;
 
-$client = new Client('domain', 'oauth token');
-
-$fileClient = new FileClient( $client );
+$fileClient = new FileClient( null, 'domain', 'oauth token' );
 
 $adapter = new EgnyteAdapter($fileClient);
 

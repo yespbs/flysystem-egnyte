@@ -320,12 +320,17 @@ class EgnyteAdapter extends AbstractAdapter
         $normalizedResponse = ['path' => $normalizedPath];
 
         if (isset($response['lastModified'])) {
-            $normalizedResponse['timestamp'] = strtotime($response['lastModified']);
+            $normalizedResponse['timestamp'] = $response['lastModified'];
+        }else{
+            $normalizedResponse['timestamp'] = time();
         }
 
         if (isset($response['size'])) {
             $normalizedResponse['size'] = $response['size'];
             $normalizedResponse['bytes'] = $response['size'];
+        }else{
+            $normalizedResponse['size'] = 0;
+            $normalizedResponse['bytes'] = 0;
         }
 
         $type = (isset($response['is_folder']) && (int)$response['is_folder'] == 1 ? 'dir' : 'file');

@@ -319,7 +319,7 @@ class EgnyteAdapter extends AbstractAdapter
             $normalizedResponse['bytes'] = $response['size'];
         }
 
-        $type = ((int)$response['is_folder'] == 1 ? 'dir' : 'file');
+        $type = (isset($response['is_folder']) && (int)$response['is_folder'] == 1 ? 'dir' : 'file');
         $normalizedResponse['type'] = $type;
 
         return $normalizedResponse;

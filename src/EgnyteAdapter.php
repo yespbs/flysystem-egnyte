@@ -146,7 +146,13 @@ class EgnyteAdapter extends AbstractAdapter
      */
     public function has($path)
     {
-        return $this->getMetadata($path);
+        $md = $this->getMetadata($path);
+
+        if( isset($md['checksum']) ){
+            return $md;
+        }
+
+        return false;
     }
 
     /**
@@ -326,6 +332,14 @@ class EgnyteAdapter extends AbstractAdapter
             $normalizedResponse['size'] = 0;
             $normalizedResponse['bytes'] = 0;
         }
+
+        if (isset($response['checksum'])) {
+            $normalizedResponse['checksum'] = $response['checksum'];
+        }    
+
+        if (isset($response['errorMessage'])) {
+            $normalizedResponse['error'] = $response['errorMessage'];
+        } 
 
         $type = (isset($response['is_folder']) && (int)$response['is_folder'] == 1 ? 'dir' : 'file');
         $normalizedResponse['type'] = $type;

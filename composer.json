@@ -1,0 +1,23 @@
+{
+    "name": "yespbs/flysystem-egnyte",
+    "description": "Flysystem Adapter for the Egnyte V1 API",
+    "type": "package",
+    "require": {
+        "php": ">=5.6.4",
+        "league/flysystem": "^1.0"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Priyabrata Sarkar",
+            "email": "yespbs@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Yespbs\\FlysystemEgnyte\\": "src/"
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

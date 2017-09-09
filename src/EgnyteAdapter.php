@@ -305,7 +305,7 @@ class EgnyteAdapter extends AbstractAdapter
         if( isset($response['path']) ){
             $normalizedPath = ltrim($this->removePathPrefix($response['path']), '/');
         }else{
-            $path = ltrim($this->removePathPrefix($path), '/');
+            $normalizedPath = ltrim($this->removePathPrefix($path), '/');
         }
 
         $normalizedResponse = ['path' => $normalizedPath];

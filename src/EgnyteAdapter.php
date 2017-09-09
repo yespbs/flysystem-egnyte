@@ -186,7 +186,7 @@ class EgnyteAdapter extends AbstractAdapter
     {
         $path = $this->applyPathPrefix($directory);
         $result = $this->fileClient->listFolder($path, $recursive);
-        if ( (int)$result['total_count']) == 0) {
+        if ( (int)$result['total_count'] == 0) {
             return [];
         }
 

@@ -3,7 +3,7 @@
 namespace Yespbs\FlysystemEgnyte;
 use LogicException;
 
-use \Yespbs\Egnyte\Model\File as FileClient;
+use \Yespbs\Egnyte\Model\File as EgnyteClient;
 
 use League\Flysystem\Config;
 use League\Flysystem\Adapter\AbstractAdapter;
@@ -16,14 +16,14 @@ class EgnyteAdapter extends AbstractAdapter
 {
     use NotSupportingVisibilityTrait;
     
-    protected $fileClient;
+    protected $client;
     
     /**
      * construct
      */ 
-    public function __construct(FileClient $fileClient, string $prefix = '')
+    public function __construct(EgnyteClient $client, string $prefix = '')
     {
-        $this->fileClient = $fileClient;
+        $this->client = $client;
         $this->setPathPrefix($prefix);
     }
 
@@ -74,7 +74,7 @@ class EgnyteAdapter extends AbstractAdapter
         $newPath = $this->applyPathPrefix($newPath);
 
         try {
-            $this->fileClient->move($path, $newPath);
+            $this->client->move($path, $newPath);
         } catch (BadRequest $e) {
             return false;
         }
@@ -93,7 +93,7 @@ class EgnyteAdapter extends AbstractAdapter
         $newpath = $this->applyPathPrefix($newpath);
 
         try {
-            $this->fileClient->copy($path, $newpath);
+            $this->client->copy($path, $newpath);
         } catch (BadRequest $e) {
             return false;
         }
@@ -110,7 +110,7 @@ class EgnyteAdapter extends AbstractAdapter
     {
         $location = $this->applyPathPrefix($path);
         try {
-            $this->fileClient->delete($location);
+            $this->client->delete($location);
         } catch (BadRequest $e) {
             return false;
         }
@@ -134,7 +134,7 @@ class EgnyteAdapter extends AbstractAdapter
     {
         $path = $this->applyPathPrefix($dirname);
         try {
-            $object = $this->fileClient->createFolder($path);
+            $object = $this->client->createFolder($path);
         } catch (BadRequest $e) {
             return false;
         }
@@ -170,7 +170,7 @@ class EgnyteAdapter extends AbstractAdapter
     {
         $path = $this->applyPathPrefix($path);
         try {
-            $stream = $this->fileClient->download($path);
+            $stream = $this->client->download($path);
         } catch (BadRequest $e) {
             return false;
         }
@@ -185,7 +185,7 @@ class EgnyteAdapter extends AbstractAdapter
     public function listContents($directory = '', $recursive = false): array
     {
         $path = $this->applyPathPrefix($directory);
-        $result = $this->fileClient->listFolder($path, $recursive);
+        $result = $this->client->listFolder($path, $recursive);
         if ( (int)$result['total_count'] == 0) {
             return [];
         }
@@ -212,7 +212,7 @@ class EgnyteAdapter extends AbstractAdapter
     {
         $path = $this->applyPathPrefix($path);
         try {
-            $object = $this->fileClient->getMetadata($path);
+            $object = $this->client->getMetadata($path);
         } catch (BadRequest $e) {
             return false;
         }
@@ -252,9 +252,9 @@ class EgnyteAdapter extends AbstractAdapter
         return '/'.trim($path, '/');
     }
 
-    public function getClient(): fileClient
+    public function getClient(): EgnyteClient
     {
-        return $this->fileClient;
+        return $this->client;
     }
 
     /**
@@ -272,10 +272,12 @@ class EgnyteAdapter extends AbstractAdapter
             print $path;
 
             print '<hr>';
-            
-            $object = $this->fileClient->upload($path, $contents);
 
-            print_r($object); die;
+            $object = $this->client->upload($path, $contents);
+
+            print_r($object); 
+
+            return $object->body;//die;
         } catch (BadRequest $e) {
             return false;
         }
@@ -294,7 +296,7 @@ class EgnyteAdapter extends AbstractAdapter
     {
         $path = $this->applyPathPrefix($path);
         try {
-            $object = $this->fileClient->uploadChunked($path, $contents);
+            $object = $this->client->uploadChunked($path, $contents);
         } catch (BadRequest $e) {
             return false;
         }

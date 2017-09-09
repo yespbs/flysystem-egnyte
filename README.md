@@ -8,12 +8,12 @@ A flysystem driver for Egnyte https://www.egnyte.com/
 use League\Flysystem\Filesystem;
 
 use Yespbs\Egnyte\Client;
-use Yespbs\Egnyte\Model\File as FileClient;
+use Yespbs\Egnyte\Model\File as EgnyteClient;
 use Yespbs\FlysystemEgnyte\EgnyteAdapter;
 
-$fileClient = new FileClient( null, 'domain', 'oauth token' );
+$client = new EgnyteClient( null, 'domain', 'oauth token' );
 
-$adapter = new EgnyteAdapter($fileClient);
+$adapter = new EgnyteAdapter($client);
 
 $filesystem = new Filesystem($adapter);
 

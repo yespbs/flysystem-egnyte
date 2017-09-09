@@ -269,15 +269,7 @@ class EgnyteAdapter extends AbstractAdapter
         $path = $this->applyPathPrefix($path);
         try {
 
-            print $path;
-
-            print '<hr>';
-
             $object = $this->client->upload($path, $contents);
-
-            print_r($object); 
-
-            return $object->body;//die;
         } catch (BadRequest $e) {
             return false;
         }

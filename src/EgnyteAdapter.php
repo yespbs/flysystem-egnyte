@@ -157,8 +157,10 @@ class EgnyteAdapter extends AbstractAdapter
         if (! $object = $this->readStream($path)) {
             return false;
         }
-        $object['contents'] = stream_get_contents($object['stream']);
-        fclose($object['stream']);
+        /*$object['contents'] = stream_get_contents($object['stream']);
+        fclose($object['stream']);*/
+
+        $object['contents'] = $object['stream'];
         unset($object['stream']);
         return $object;
     }

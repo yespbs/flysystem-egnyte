@@ -4,7 +4,12 @@
     "type": "package",
     "require": {
         "php": ">=5.6.4",
-        "league/flysystem": "^1.0"
+        "league/flysystem": "^1.0",
+        "yespbs/egnyte": "*"
+    },
+    "require-dev": {
+        "vlucas/phpdotenv": "^2.4@dev",
+        "phpunit/phpunit": "~5.7"
     },
     "license": "MIT",
     "authors": [
@@ -18,6 +23,12 @@
             "Yespbs\\FlysystemEgnyte\\": "src/"
         }
     },
+    "repositories": [
+        {
+            "type": "git",
+            "url": "https://github.com/yespbs/egnyte.git"
+        }
+    ],
     "minimum-stability": "dev",
     "prefer-stable": true
 }

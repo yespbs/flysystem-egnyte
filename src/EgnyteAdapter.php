@@ -278,6 +278,10 @@ class EgnyteAdapter extends AbstractAdapter
         try {
 
             $object = $this->client->upload($path, $contents);
+
+            if( (int)$object->status_code == 200 ){
+                print_r( $this->getMetadata($path) );
+            }
         } catch (BadRequest $e) {
             return false;
         }
@@ -308,7 +312,7 @@ class EgnyteAdapter extends AbstractAdapter
     {
         
         if( is_object($response) && isset($response->body) ){
-            $response = (array)$response->body;
+            $response = (array)$response->getBody();
         }
 
         if( isset($response['path']) ){

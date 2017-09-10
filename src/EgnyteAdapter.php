@@ -194,21 +194,35 @@ class EgnyteAdapter extends AbstractAdapter
     {
         $path = $this->applyPathPrefix($directory);
         $result = $this->client->listFolder($path, $recursive);
+        $result = (array)$result->getBody();
+
         if ( (int)$result['total_count'] == 0) {
             return [];
         }
 
-        $folders = array_map(function ($entry) {
-            $path = $this->removePathPrefix($entry['path']);
-            return $this->normalizeResponse($entry, $path);
+        if( isset($result['folders']) ){
+            $folders = array_map(function ($entry) {
 
-        }, $result['folders']);
+                $entry = (array)$entry;
 
-        $files = array_map(function ($entry) {
-            $path = $this->removePathPrefix($entry['path']);
-            return $this->normalizeResponse($entry, $path);
+                $path = $this->removePathPrefix($entry['path']);
+                return $this->normalizeResponse($entry, $path);
 
-        }, $result['files']);
+            }, $result['folders']);
+        }else{
+            $folders = [];
+        }    
+
+        if( isset($result['files']) ){
+            $files = array_map(function ($entry) {
+                $entry = (array)$entry;
+                $path = $this->removePathPrefix($entry['path']);
+                return $this->normalizeResponse($entry, $path);
+
+            }, $result['files']);
+        }else{
+            $files = [];
+        }    
 
         return array_merge($folders, $files);
     }
@@ -221,6 +235,9 @@ class EgnyteAdapter extends AbstractAdapter
         $path = $this->applyPathPrefix($path);
         try {
             $object = $this->client->getMetadata($path);
+
+            /*echo '<pre>';
+            print_r($object);*/
         } catch (BadRequest $e) {
             return false;
         }
@@ -240,7 +257,9 @@ class EgnyteAdapter extends AbstractAdapter
      */
     public function getMimetype($path)
     {
-        return $this->getMetadata($path);
+        //return $this->getMetadata($path);
+
+        throw new LogicException(get_class($this) . ' does not support mimetype. Path: ' . $path);
     }
 
     /**
@@ -279,9 +298,6 @@ class EgnyteAdapter extends AbstractAdapter
 
             $object = $this->client->upload($path, $contents);
 
-            if( (int)$object->status_code == 200 ){
-                print_r( $this->getMetadata($path) );
-            }
         } catch (BadRequest $e) {
             return false;
         }
@@ -325,6 +341,8 @@ class EgnyteAdapter extends AbstractAdapter
 
         if (isset($response['lastModified'])) {
             $normalizedResponse['timestamp'] = $response['lastModified'];
+        }elseif (isset($response['last_modified'])) {
+            $normalizedResponse['timestamp'] = strtotime($response['last_modified']);
         }else{
             $normalizedResponse['timestamp'] = time();
         }

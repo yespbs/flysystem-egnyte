@@ -9,7 +9,7 @@
     },
     "require-dev": {
         "vlucas/phpdotenv": "^2.4@dev",
-        "phpunit/phpunit": "~5.7"
+        "phpunit/phpunit": "^6.0"
     },
     "license": "MIT",
     "authors": [
@@ -23,12 +23,15 @@
             "Yespbs\\FlysystemEgnyte\\": "src/"
         }
     },
-    "repositories": [
-        {
-            "type": "git",
-            "url": "https://github.com/yespbs/egnyte.git"
+    "autoload-dev": {
+        "psr-4": {
+            "Yespbs\\FlysystemEgnyte\\Test\\": "tests"
         }
-    ],
-    "minimum-stability": "dev",
-    "prefer-stable": true
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit"
+    },
+    "config": {
+        "sort-packages": true
+    }
 }

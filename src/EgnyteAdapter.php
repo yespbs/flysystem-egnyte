@@ -16,6 +16,9 @@ class EgnyteAdapter extends AbstractAdapter
 {
     use NotSupportingVisibilityTrait;
     
+    /**
+     * @var
+     */ 
     protected $client;
     
     /**

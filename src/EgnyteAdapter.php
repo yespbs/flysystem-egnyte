@@ -151,7 +151,7 @@ class EgnyteAdapter extends AbstractAdapter
     {
         $md = $this->getMetadata($path);
 
-        if( isset($md['checksum']) ){
+        if( isset($md['timestamp']) ){
             return $md;
         }
 

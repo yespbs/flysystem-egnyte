@@ -151,7 +151,19 @@ class EgnyteAdapter extends AbstractAdapter
     {
         $md = $this->getMetadata($path);
 
+        /**
+         * When using EgnyteAdaptor with a stream wrapper and renaming a file the 'has' check on the subdirectory 
+         * of the destination was returning false due to the metadata not containing a checksum, which is not expected 
+         * to be returned for a directory.
+         */ 
         if( isset($md['timestamp']) ){
+            return $md;
+        }
+
+        /**
+         * Default
+         */ 
+        if( isset($md['checksum']) ){
             return $md;
         }
 
